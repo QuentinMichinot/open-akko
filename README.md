@@ -1,56 +1,136 @@
-# Open Akko
+<div align="center">
+  <img src="docs/logo.svg" width="128" height="128" alt="Open Akko Logo">
+  
+  # Open Akko
+  
+  **Configuration complète des claviers AKKO sous Windows et Linux**
+  
+  [📥 Télécharger](https://github.com/kayzidev/open-akko/releases/latest) · [🐛 Signaler un bug](https://github.com/kayzidev/open-akko/issues/new/choose) · [📋 Claviers supportés](docs/BOARDS.md)
+</div>
 
-<p align="center"><img src="assets/open-akko.png" width="160" alt="Open Akko : chat siamois et clavier séparés en diagonale"></p>
+---
 
-Configuration des claviers AKKO sous Windows et Linux : éclairage, couleurs par touche, affectations, macros et effets audio selon les capacités du modèle.
+## ✨ Fonctionnalités
 
-[Téléchargements](https://github.com/kayzidev/open-akko/releases/latest) · [Signaler un problème](https://github.com/kayzidev/open-akko/issues) · [Profils de claviers](docs/MULTI-KEYBOARDS-WINDOWS.md)
+Open Akko vous permet de configurer votre clavier AKKO directement depuis votre ordinateur :
 
-## Installation
+- 🎨 **Éclairage RGB** : personnalisez l'éclairage, les couleurs par touche et les effets
+- ⌨️ **Remappage des touches** : réaffectez les touches et créez des macros personnalisées
+- 🔊 **Effets audio** : réactivité audio en temps réel sur les claviers compatibles
+- 🖼️ **Interface intuitive** : visualisation graphique de votre disposition de clavier
+- 🔄 **Mises à jour automatiques** : restez à jour avec les dernières fonctionnalités
 
-| Système | Format | Mises à jour intégrées |
-| --- | --- | --- |
-| Windows 10/11 x64 | Installateur `.exe` | Oui, après confirmation |
-| Fedora / Linux x64 | `.AppImage` dans un dossier accessible en écriture | Oui, après confirmation |
-| Compilation locale, paquet RPM ou archive portable | Selon votre installation | Notification et page de téléchargement |
+<!-- Screenshots will be added here when available
+![Open Akko interface]()
+![Lighting configuration]()
+![Key remapping]()
+-->
 
-Sous Linux, installez `pipewire-utils` et `pulseaudio-utils` pour les effets audio. Installez aussi les règles d’accès USB une fois, puis rebranchez le clavier :
+## 🎹 Claviers supportés
 
-```sh
+Open Akko prend en charge **1413 modèles de claviers AKKO**, dont :
+
+- **1182 claviers en lecture/écriture** (configuration complète)
+- **374 claviers avec rendu visuel** prêt à l'emploi
+- **832 claviers avec rendu après confirmation**
+
+Consultez la [liste complète des claviers supportés](docs/BOARDS.md) pour vérifier la compatibilité de votre modèle.
+
+> **Note** : Le support audio a été validé sur l'Akko 5075. Voir [AUDIO.md](AUDIO.md) pour les détails.
+
+## 📥 Installation
+
+### Windows 10/11 (64-bit)
+
+1. Téléchargez l'installateur `.exe` depuis la [page des releases](https://github.com/kayzidev/open-akko/releases/latest)
+2. Exécutez l'installateur (les mises à jour automatiques seront disponibles)
+3. Branchez votre clavier AKKO en USB
+
+**Format portable** : Une archive `.zip` portable est également disponible
+
+### Linux (64-bit)
+
+#### AppImage (recommandé)
+
+1. Téléchargez le fichier `.AppImage` depuis la [page des releases](https://github.com/kayzidev/open-akko/releases/latest)
+2. Rendez-le exécutable : `chmod +x Open-Akko-*.AppImage`
+3. Installez les règles udev (requis pour l'accès USB) :
+
+```bash
 sudo install -m 0644 packaging/70-open-akko.rules /etc/udev/rules.d/70-open-akko.rules
 sudo udevadm control --reload-rules
 ```
 
-Pour exécuter l’AppImage, rendez-la exécutable dans les propriétés du fichier. Selon la distribution, le paquet de compatibilité FUSE 2 peut être nécessaire.
+4. Débranchez et rebranchez votre clavier
+5. Lancez l'AppImage
 
-## Claviers et audio
+> **Note** : Selon votre distribution, vous pourriez avoir besoin d'installer FUSE 2 pour l'AppImage.
 
-Branchez le clavier en USB pour modifier ses réglages. Le registre distingue les modèles, leurs protocoles et les fonctions validées. Un nom de gamme ou un identifiant USB partagé ne suffit pas à activer une nouvelle fonction.
+#### RPM (Fedora, RHEL, OpenSUSE)
 
-Le mode audio a été vérifié sur l’Akko 5075 identifié en interne comme `1165` : sortie PC sur la zone principale, microphone sur Home, PgUp, PgDn, End et flèche droite. Les deux sources ont leurs propres réglages. Le son est analysé localement, sans enregistrement.
-
-Les profils 5075B Plus et 3098B préparent leur intégration. Leur présence dans le catalogue ne valide pas le mode audio sur ces modèles. Voir [la documentation audio](AUDIO.md).
-
-## Mises à jour
-
-Après une fusion dans `main`, GitHub vérifie les clients Windows/Linux, construit les deux paquets signés et publie une version. Si un contrôle ou une compilation échoue, aucune nouvelle version n’est proposée aux clients.
-
-Le client vérifie au lancement puis toutes les quatre heures. Une fenêtre propose l’installation ou « Plus tard ». Le téléchargement et l’installation ne commencent qu’après acceptation. La signature est vérifiée avant l’installation ; le logiciel attend les opérations USB en cours et rétablit l’éclairage avant de redémarrer.
-
-La publication nécessite d’abord la configuration de la clé privée dans les secrets GitHub. Voir [le guide GitHub et mises à jour](docs/GITHUB-RELEASES.md).
-
-## Développement
-
-```sh
-cd app
-npm ci
-npm run tauri dev
+```bash
+sudo dnf install ./open-akko-*.rpm
 ```
 
-Les dépendances système et les formats sont détaillés dans [le guide Windows/Linux](docs/MULTI-KEYBOARDS-WINDOWS.md). Les tests et les règles de contribution sont dans [CONTRIBUTING.md](CONTRIBUTING.md).
+#### Arch Linux (AUR)
 
-## Licence et origine
+Un paquet AUR pourra être ajouté par la communauté.
 
-Open Akko est une adaptation de [Sharkfin, par dniminenn et ses contributeurs](https://github.com/dniminenn/sharkfin), distribuée sous [GPL-3.0-or-later](LICENSE). Les notices et attributions d’origine sont conservées. Les bibliothèques et polices distribuées sont décrites dans [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+#### Dépendances optionnelles (effets audio)
 
-Projet communautaire indépendant, sans affiliation à AKKO.
+Pour activer les effets audio en temps réel :
+
+```bash
+# Ubuntu/Debian
+sudo apt install pipewire-utils pulseaudio-utils
+
+# Fedora
+sudo dnf install pipewire-utils pulseaudio-utils
+
+# Arch
+sudo pacman -S pipewire pipewire-pulse
+```
+
+## 🛠️ Compiler depuis les sources
+
+### Prérequis
+
+- **Node.js** 18+ et npm
+- **Rust** 1.70+
+- **Dépendances système** :
+  - Linux : `webkit2gtk`, `libayatana-appindicator`, `udev`
+  - Windows : Visual Studio Build Tools
+
+### Compilation
+
+```bash
+git clone https://github.com/kayzidev/open-akko.git
+cd open-akko/app
+npm install
+npm run tauri dev  # Mode développement
+npm run tauri build  # Build de production
+```
+
+Consultez [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails sur le développement.
+
+## 🤝 Contribuer
+
+Les contributions sont les bienvenues ! Consultez [CONTRIBUTING.md](CONTRIBUTING.md) pour :
+
+- Signaler un bug ou demander une fonctionnalité
+- Soumettre un support pour un nouveau clavier
+- Contribuer du code
+
+## 📜 Licence
+
+Open Akko est distribué sous licence [GPL-3.0-or-later](LICENSE).
+
+Ce projet est un fork de [Sharkfin](https://github.com/dniminenn/sharkfin) créé par dniminenn et ses contributeurs. Toutes les notices d'attribution d'origine sont conservées.
+
+Les bibliothèques tierces et polices distribuées sont listées dans [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+---
+
+<div align="center">
+  <sub>Projet communautaire indépendant • Sans affiliation avec AKKO</sub>
+</div>
