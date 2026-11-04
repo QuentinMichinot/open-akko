@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+export const EFFECT_INFO:Record<number,{group:string;hint:string}>={
+ 1:{group:'Ambiances',hint:'Couleur stable. Pas de réglage de vitesse.'},
+ 2:{group:'Ambiances',hint:'La couleur monte et descend en luminosité.'},
+ 3:{group:'Ambiances',hint:'Les couleurs défilent automatiquement.'},
+ 4:{group:'Mouvements',hint:'Vague avec choix de direction.'},
+ 5:{group:'Réactifs',hint:'Ondes déclenchées par les touches. Les appuis rapides peuvent éclairer tout le clavier.'},
+ 6:{group:'Ambiances',hint:'Points lumineux et scintillement.'},
+ 7:{group:'Mouvements',hint:'Défilement en zigzag ou en spirale.'},
+ 8:{group:'Réactifs',hint:'Appuyez sur une touche pour déclencher la lumière.'},
+ 9:{group:'Mouvements',hint:'Allumage progressif par groupes.'},
+ 10:{group:'Mouvements',hint:'Trajectoires sinusoïdales.'},
+ 11:{group:'Mouvements',hint:'Propagation avec une direction réglable ci-dessous.'},
+ 12:{group:'Mouvements',hint:'Balayage néon.'},
+ 14:{group:'Réactifs',hint:'La lumière se propage depuis la touche pressée.'},
+ 15:{group:'Mouvements',hint:'Rotation dans les deux sens.'},
+ 16:{group:'Ambiances',hint:'Blocs de couleurs.'},
+ 17:{group:'Mouvements',hint:'Flocons en mouvement.'},
+ 18:{group:'Mouvements',hint:'Traînées lumineuses.'},
+ 19:{group:'Indisponibles',hint:'Ne fonctionne pas sur votre variante. Utilisez Chute de neige.'},
+};

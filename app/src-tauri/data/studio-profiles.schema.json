@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Akko Studio keyboard profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "profiles"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/profile"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "hardware",
+            "firmware",
+            "registry"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "mode",
+        "option",
+        "columns",
+        "microphoneColumns",
+        "microphoneKeys",
+        "evidence"
+      ],
+      "properties": {
+        "protocol": {
+          "const": "yc500-music32"
+        },
+        "mode": {
+          "const": 22
+        },
+        "option": {
+          "const": 0
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 31
+          }
+        },
+        "microphoneColumns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 31
+          }
+        },
+        "microphoneKeys": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "reference"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "hardware",
+                "firmware"
+              ]
+            },
+            "reference": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deviceId",
+        "vendorId",
+        "productId",
+        "family",
+        "model",
+        "unavailableLightingModes",
+        "fullMacroUpload",
+        "audio",
+        "evidence"
+      ],
+      "properties": {
+        "deviceId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "vendorId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "productId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "family": {
+          "enum": [
+            "yc500",
+            "gen2"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unavailableLightingModes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "fullMacroUpload": {
+          "type": "boolean"
+        },
+        "audio": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/audio"
+            }
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        }
+      }
+    }
+  }
+}

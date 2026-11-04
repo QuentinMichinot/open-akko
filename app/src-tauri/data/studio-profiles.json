@@ -1,0 +1,87 @@
+{
+  "$schema": "./studio-profiles.schema.json",
+  "version": 1,
+  "profiles": [
+    {
+      "deviceId": 1165,
+      "vendorId": 12625,
+      "productId": 16405,
+      "family": "yc500",
+      "model": "Akko 5075 · USB",
+      "unavailableLightingModes": [
+        19
+      ],
+      "fullMacroUpload": true,
+      "audio": {
+        "protocol": "yc500-music32",
+        "mode": 22,
+        "option": 0,
+        "columns": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "microphoneColumns": [
+          16
+        ],
+        "microphoneKeys": [
+          "Home",
+          "PgUp",
+          "PgDn",
+          "End",
+          "→"
+        ],
+        "evidence": {
+          "kind": "hardware",
+          "reference": "Mode22 readback; 0x0D streaming at 50fps; owner confirmed right keys; restore verified, 2026-11-03."
+        }
+      },
+      "evidence": {
+        "kind": "hardware",
+        "reference": "Local USB read/write/restore and owner visual confirmations, 2026-11-03"
+      }
+    },
+    {
+      "deviceId": 1042,
+      "vendorId": 12625,
+      "productId": 16405,
+      "family": "yc500",
+      "model": "Akko 5075B Plus",
+      "unavailableLightingModes": [],
+      "fullMacroUpload": false,
+      "audio": null,
+      "evidence": {
+        "kind": "registry",
+        "reference": "Existing hardware-backed device registry; audio has not been validated."
+      }
+    },
+    {
+      "deviceId": 69,
+      "vendorId": 12625,
+      "productId": 16386,
+      "family": "yc500",
+      "model": "Akko 3098B",
+      "unavailableLightingModes": [],
+      "fullMacroUpload": false,
+      "audio": null,
+      "evidence": {
+        "kind": "registry",
+        "reference": "Existing hardware-backed device registry; audio has not been validated."
+      }
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+name: Publish clients
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-open-akko
+  cancel-in-progress: false
+jobs:
+  checks:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ci.yml
+  version:
+    needs: checks
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - id: version
+        env:
+          RELEASE_RUN_NUMBER: ${{ github.run_number }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: python tools/release.py version --run-number "$RELEASE_RUN_NUMBER" --repository "$RELEASE_REPOSITORY" --github-output "$GITHUB_OUTPUT"
+  build:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux
+            bundle: appimage
+          - os: windows-latest
+            platform: windows
+            bundle: nsis
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-desktop
+      - name: Prepare release version and signed bundle
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          RELEASE_PLATFORM: ${{ matrix.platform }}
+        run: python tools/release.py prepare --version "$env:RELEASE_VERSION" --platform "$env:RELEASE_PLATFORM"
+        if: runner.os == 'Windows'
+      - name: Prepare Linux release
+        if: runner.os == 'Linux'
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        run: python tools/release.py prepare --version "$RELEASE_VERSION" --platform linux
+      - name: Signing key is configured
+        shell: bash
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            echo "Configure the TAURI_SIGNING_PRIVATE_KEY Actions secret before publishing." >&2
+            exit 1
+          fi
+      - name: Build signed release
+        working-directory: app
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+          RELEASE_BUNDLE: ${{ matrix.bundle }}
+        shell: bash
+        run: npx tauri build --ci --config ../.release/tauri-release.json --bundles "$RELEASE_BUNDLE" -- --locked
+      - name: Apply AppImage compatibility fixes and re-sign
+        if: runner.os == 'Linux'
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+        run: python tools/fix_appimage.py
+      - name: Collect signed artifacts
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          RELEASE_PLATFORM: ${{ matrix.platform }}
+        run: python tools/release.py collect --version "$RELEASE_VERSION" --platform "$RELEASE_PLATFORM"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signed-${{ matrix.platform }}
+          path: artifacts/release/*
+          if-no-files-found: error
+  publish:
+    needs: [version, build]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tools/verify-release
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: signed-*
+          merge-multiple: true
+          path: artifacts/release
+      - name: Attach exact source commit
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        run: git archive --format=zip --prefix=open-akko/ -o "artifacts/release/open-akko-${RELEASE_VERSION}-sources.zip" HEAD
+      - name: Verify complete feed and publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          python tools/release.py manifest --version "$RELEASE_VERSION" --repository "$RELEASE_REPOSITORY"
+          python tools/release.py publish --version "$RELEASE_VERSION" --repository "$RELEASE_REPOSITORY" --commit "$RELEASE_SHA"
