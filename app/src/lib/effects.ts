@@ -191,9 +191,10 @@ function hueTurns(family: Family, mode: number, wire: number, frame: number): nu
 
 /** How long a full breath takes, in frames, both directions. */
 export function breathFrames(family: Family, wire: number): number {
-  if (family === "yc500") return 2 * (tab(YC500.breath, wire) + YC500.hold);
+  const safeWire = Number.isFinite(wire) ? Math.max(0, Math.min(wire, 10)) : 0;
+  if (family === "yc500") return 2 * (tab(YC500.breath, safeWire) + YC500.hold);
   // gen2: 0..100 in steps of 8, one step every `wire` frames.
-  return 2 * Math.ceil(100 / 8) * Math.max(1, wire);
+  return 2 * Math.ceil(100 / 8) * Math.max(1, safeWire);
 }
 
 function hsv(h: number, s: number, v: number): Rgb {
@@ -226,10 +227,15 @@ function glow(level: number): number {
 }
 
 /** The grid cell a key falls in, as the firmware addresses LEDs. */
-function cellOf(led: Led): { row: number; col: number } {
+function cellOf(led: Led | undefined): { row: number; col: number } {
+  if (!led || typeof led.x !== "number" || typeof led.y !== "number") {
+    return { row: 0, col: 0 };
+  }
+  const x = Number.isFinite(led.x) ? led.x : 0;
+  const y = Number.isFinite(led.y) ? led.y : 0;
   return {
-    row: Math.min(GRID_ROWS - 1, Math.floor(led.y * GRID_ROWS)),
-    col: Math.min(GRID_COLS - 1, Math.floor(led.x * GRID_COLS)),
+    row: Math.min(GRID_ROWS - 1, Math.max(0, Math.floor(y * GRID_ROWS))),
+    col: Math.min(GRID_COLS - 1, Math.max(0, Math.floor(x * GRID_COLS))),
   };
 }
 
@@ -243,8 +249,9 @@ function noise(i: number, n: number): number {
 /** The colour a fixed-colour mode paints with, or a preset when the
  *  firmware walks its palette. */
 function base(p: EffectParam, step: number): Rgb {
-  if (!p.rainbow) return [p.r, p.g, p.b];
-  return PRESETS[((step % 7) + 7) % 7];
+  if (!p.rainbow) return [p.r ?? 0, p.g ?? 0, p.b ?? 0];
+  const index = Number.isFinite(step) ? ((step % 7) + 7) % 7 : 0;
+  return PRESETS[Math.min(Math.max(0, index), PRESETS.length - 1)] ?? [255, 255, 255];
 }
 
 /** Triangle 0..1..0 with a flat top and bottom, as the yc500 fader. */
@@ -271,42 +278,68 @@ function breath(family: Family, wire: number, frame: number): { level: number; c
 export function colorAt(
   family: Family,
   p: EffectParam,
-  led: Led,
+  led: Led | undefined,
   index: number,
   frame: number,
 ): Rgb {
+  if (!led || typeof led.x !== "number" || typeof led.y !== "number") {
+    return [0, 0, 0];
+  }
+  if (!Number.isFinite(led.x) || !Number.isFinite(led.y)) {
+    return [0, 0, 0];
+  }
+  if (!p || typeof p.mode !== "number") {
+    return [0, 0, 0];
+  }
+  const safeFrame = Number.isFinite(frame) ? Math.max(0, frame) : 0;
+  const safeIndex = Number.isFinite(index) ? Math.max(0, index) : 0;
   if ([5, 8, 14].includes(p.mode)) {
     const sum: Rgb = [0, 0, 0];
-    for (const hit of p.hits ?? []) {
-      const age = (frame - hit.frame) * FRAME_MS;
+    const hits = Array.isArray(p.hits) ? p.hits : [];
+    for (const hit of hits) {
+      if (!hit || typeof hit.x !== "number" || typeof hit.y !== "number" || typeof hit.frame !== "number") {
+        continue;
+      }
+      const age = (safeFrame - hit.frame) * FRAME_MS;
       if (age < 0 || age > 2200) continue;
       const distance = Math.hypot((led.x-hit.x)*1.7, (led.y-hit.y)*0.8);
+      if (!Number.isFinite(distance)) continue;
       let level:number;
-      if (p.mode === 8) level = distance < 0.02 ? Math.max(0,1-age/(250+(4-p.speed)*250)) : 0;
-      else {
-        const radius = age/1000 * (p.mode===14 ? 0.8+p.speed*0.3 : 0.35+p.speed*0.18);
-        const width = p.mode===14 ? 0.06 : 0.12;
-        level = Math.exp(-Math.pow((distance-radius)/width,2))*Math.max(0,1-age/2000);
+      const speed = typeof p.speed === "number" ? Math.max(0, Math.min(4, p.speed)) : 2;
+      if (p.mode === 8) {
+        const divisor = 250 + (4 - speed) * 250;
+        level = distance < 0.02 ? Math.max(0, 1 - age / Math.max(1, divisor)) : 0;
+      } else {
+        const radius = (age / 1000) * (p.mode === 14 ? 0.8 + speed * 0.3 : 0.35 + speed * 0.18);
+        const width = p.mode === 14 ? 0.06 : 0.12;
+        level = Math.exp(-Math.pow((distance - radius) / Math.max(0.001, width), 2)) * Math.max(0, 1 - age / 2000);
       }
-      const colour:Rgb = p.rainbow ? hsv((hit.x+hit.y+hit.frame/400)%1,1,1) : [p.r,p.g,p.b];
-      for (let channel=0;channel<3;channel++) sum[channel]=Math.min(255,sum[channel]+colour[channel]*level);
+      const colour: Rgb = p.rainbow ? hsv((hit.x + hit.y + hit.frame / 400) % 1, 1, 1) : [p.r ?? 0, p.g ?? 0, p.b ?? 0];
+      for (let channel = 0; channel < 3; channel++) {
+        sum[channel] = Math.min(255, sum[channel] + colour[channel] * level);
+      }
     }
-    return scale(sum,p.brightnessMax>0?p.brightness/p.brightnessMax:1);
+    const brightnessMax = typeof p.brightnessMax === "number" && p.brightnessMax > 0 ? p.brightnessMax : 1;
+    const brightness = typeof p.brightness === "number" ? p.brightness : brightnessMax;
+    return scale(sum, brightness / brightnessMax);
   }
-  const wire = wireSpeed(family, p.speed);
-  const gain = p.brightnessMax > 0 ? p.brightness / p.brightnessMax : 1;
-  const stepLen = stepFrames(family, p.mode, wire);
-  const step = Math.floor(frame / stepLen);
-  const stepPhase = (frame % stepLen) / stepLen;
-  const turns = hueTurns(family, p.mode, wire, frame);
+  const wire = wireSpeed(family, typeof p.speed === "number" ? p.speed : 2);
+  const brightnessMax = typeof p.brightnessMax === "number" && p.brightnessMax > 0 ? p.brightnessMax : 1;
+  const brightness = typeof p.brightness === "number" ? p.brightness : brightnessMax;
+  const gain = brightness / brightnessMax;
+  const stepLen = Math.max(1, stepFrames(family, p.mode, wire));
+  const step = Math.floor(safeFrame / stepLen);
+  const stepPhase = (safeFrame % stepLen) / stepLen;
+  const turns = hueTurns(family, p.mode, wire, safeFrame);
   const { row, col } = cellOf(led);
+  const option = typeof p.option === "number" ? p.option : 0;
 
   let c: Rgb;
   switch (p.mode) {
     case 1:
     case 19: {
       // Static, and Silent snow, which holds still on the board too.
-      c = p.rainbow ? hsv(led.x, 1, 1) : [p.r, p.g, p.b];
+      c = p.rainbow ? hsv(led.x, 1, 1) : [p.r ?? 0, p.g ?? 0, p.b ?? 0];
       break;
     }
     case 2: {
@@ -322,25 +355,25 @@ export function colorAt(
     case 4: {
       // Every column holds its own hue, offset from its neighbour, and all
       // walk together, so the rainbow slides along the chosen direction.
-      const along = [led.x, 1 - led.x, led.y, 1 - led.y][p.option % 4] ?? led.x;
+      const along = [led.x, 1 - led.x, led.y, 1 - led.y][option % 4] ?? led.x;
       c = p.rainbow
         ? hsv(along + turns, 1, 1)
-        : scale([p.r, p.g, p.b], glow(0.5 + 0.5 * Math.cos((along + turns) * Math.PI * 2)));
+        : scale([p.r ?? 0, p.g ?? 0, p.b ?? 0], glow(0.5 + 0.5 * Math.cos((along + turns) * Math.PI * 2)));
       break;
     }
     case 6: {
       // A new star every step; each burns for a while and fades.
       const life = 40;
-      const born = step - (Math.floor(noise(index, 0) * life) % life);
+      const born = step - (Math.floor(noise(safeIndex, 0) * life) % life);
       const age = ((step - born) % life + life) % life;
-      const level = age < 6 ? age / 6 : Math.max(0, 1 - (age - 6) / (life - 6));
-      c = scale(p.rainbow ? hsv(noise(index, Math.floor(step / life)), 1, 1) : [p.r, p.g, p.b], glow(level));
+      const level = age < 6 ? age / 6 : Math.max(0, 1 - (age - 6) / Math.max(1, life - 6));
+      c = scale(p.rainbow ? hsv(noise(safeIndex, Math.floor(step / life)), 1, 1) : [p.r ?? 0, p.g ?? 0, p.b ?? 0], glow(level));
       break;
     }
     case 7: {
       // A head runs the rows one cell per step, zigzag or spiral, with a tail.
       const cells = GRID_ROWS * GRID_COLS;
-      const spiral = p.option === 1;
+      const spiral = option === 1;
       let pos: number;
       if (spiral) {
         // Rings from the outside in: rank each cell by its distance to the edge.
@@ -351,17 +384,17 @@ export function colorAt(
       }
       const head = (step % cells) + stepPhase;
       const dist = ((pos - head) % cells + cells) % cells;
-      c = scale(base(p, Math.floor(step / cells)), glow(dist > cells - 6 ? (dist - (cells - 6)) / 6 : 0));
+      c = scale(base(p, Math.floor(step / Math.max(1, cells))), glow(dist > cells - 6 ? (dist - (cells - 6)) / 6 : 0));
       break;
     }
     case 9: {
       // The firmware's script: cells stay lit until the cycle rests.
-      const cycle = Math.floor(step / LAYERS.total);
-      const now = step % LAYERS.total;
+      const cycle = Math.floor(step / Math.max(1, LAYERS.total));
+      const now = step % Math.max(1, LAYERS.total);
       const items = LAYERS.cells.get(row * GRID_COLS + col) ?? [];
       let lit: ScriptItem | null = null;
       for (const it of items) if (it.step <= now) lit = it;
-      c = lit ? (p.rainbow ? PRESETS[(cycle * 2 + lit.phase) % 6] : [p.r, p.g, p.b]) : [0, 0, 0];
+      c = lit ? (p.rainbow ? PRESETS[(cycle * 2 + lit.phase) % 6] : [p.r ?? 0, p.g ?? 0, p.b ?? 0]) : [0, 0, 0];
       break;
     }
     case 10: {
@@ -381,23 +414,23 @@ export function colorAt(
     case 11: {
       // Rings breathing out of, or into, the centre; never dark between.
       const d = Math.hypot(led.x - 0.5, (led.y - 0.5) * 0.4) / 0.6;
-      const dir = p.option === 1 ? -1 : 1;
+      const dir = option === 1 ? -1 : 1;
       const phase = d * 2 - dir * turns;
       c = scale(
-        p.rainbow ? hsv(phase, 1, 1) : [p.r, p.g, p.b],
+        p.rainbow ? hsv(phase, 1, 1) : [p.r ?? 0, p.g ?? 0, p.b ?? 0],
         0.45 + 0.55 * glow(0.5 + 0.5 * Math.cos(phase * Math.PI * 2)),
       );
       break;
     }
     case 12: {
       // Neon: a rainbow sweep, left or right.
-      const dir = p.option === 1 ? -1 : 1;
+      const dir = option === 1 ? -1 : 1;
       c = hsv(led.x * dir - turns, 1, 1);
       break;
     }
     case 15: {
       // A dot around the perimeter, with a tail.
-      const dir = p.option === 1 ? -1 : 1;
+      const dir = option === 1 ? -1 : 1;
       const a = (Math.atan2((led.y - 0.5) * 0.4, led.x - 0.5) / (Math.PI * 2) + 1) % 1;
       const head = ((dir * turns) % 1 + 1) % 1;
       const dist = ((a - head) % 1 + 1) % 1;
@@ -408,24 +441,24 @@ export function colorAt(
     case 16: {
       // Blocks of colour that change every so often.
       const cell = Math.floor(led.x * 6) + 6 * Math.floor(led.y * 3);
-      const epoch = Math.floor(frame / 120);
+      const epoch = Math.floor(safeFrame / 120);
       c = PRESETS[Math.floor(noise(cell, epoch) * 7)];
       break;
     }
     case 17: {
       // Flakes fall one row every few frames, each in one colour.
       const fallFrames = 12;
-      const drop = frame / (fallFrames * GRID_ROWS) + noise(col, 0);
+      const drop = safeFrame / (fallFrames * GRID_ROWS) + noise(col, 0);
       const fall = ((drop % 1) + 1) % 1;
       const d = Math.abs(led.y - fall);
-      const flake: Rgb = p.rainbow ? PRESETS[Math.floor(noise(col, Math.floor(drop) + 1) * 7)] : [p.r, p.g, p.b];
+      const flake: Rgb = p.rainbow ? PRESETS[Math.floor(noise(col, Math.floor(drop) + 1) * 7)] : [p.r ?? 0, p.g ?? 0, p.b ?? 0];
       c = scale(flake, glow(Math.max(0, 1 - d * 5) * (noise(col, 1) > 0.4 ? 1 : 0.3)));
       break;
     }
     case 18: {
       // Meteors: streaks with a tail, a few columns at a time.
       const fallFrames = 8;
-      const drop = frame / (fallFrames * GRID_ROWS) + noise(col, 0);
+      const drop = safeFrame / (fallFrames * GRID_ROWS) + noise(col, 0);
       const head = ((drop % 1.5) + 1.5) % 1.5;
       const d = head - led.y;
       const active = noise(col, Math.floor(drop / 1.5)) > 0.6;
@@ -433,7 +466,7 @@ export function colorAt(
       break;
     }
     default:
-      c = [p.r, p.g, p.b];
+      c = [p.r ?? 0, p.g ?? 0, p.b ?? 0];
   }
   return scale(c, gain);
 }

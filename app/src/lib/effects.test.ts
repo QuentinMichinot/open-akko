@@ -96,3 +96,35 @@ describe('observed reactive effects',()=>{
   expect(colorAt('yc500',{...p,hits:[a,b]},led,0,1)[0]).toBeGreaterThan(single);
  });
 });
+
+describe('robustness',()=>{
+ it('handles undefined led gracefully',()=>{
+  expect(colorAt('gen2',base,undefined,0,0)).toEqual([0,0,0]);
+ });
+ it('handles invalid led coordinates',()=>{
+  expect(colorAt('gen2',base,{x:NaN,y:0.5},0,0)).toEqual([0,0,0]);
+  expect(colorAt('gen2',base,{x:0.5,y:Infinity},0,0)).toEqual([0,0,0]);
+ });
+ it('handles missing param fields',()=>{
+  const incomplete={mode:1,speed:2} as unknown as EffectParam;
+  const result=colorAt('gen2',incomplete,{x:0.5,y:0.5},0,0);
+  expect(result).toEqual([0,0,0]);
+ });
+ it('handles invalid hits array in reactive modes',()=>{
+  const p={...base,mode:5,hits:[{x:0.5,y:NaN,frame:0},{x:Infinity,y:0.5,frame:10},null,undefined] as any};
+  expect(()=>colorAt('gen2',p,{x:0.5,y:0.5},0,100)).not.toThrow();
+ });
+ it('handles division by zero scenarios',()=>{
+  const p={...base,mode:8,speed:4,brightnessMax:0,hits:[{x:0.5,y:0.5,frame:0}]};
+  expect(()=>colorAt('gen2',p,{x:0.5,y:0.5},0,10)).not.toThrow();
+ });
+ it('handles extreme frame values',()=>{
+  expect(()=>colorAt('gen2',base,{x:0.5,y:0.5},0,1e9)).not.toThrow();
+  expect(()=>colorAt('gen2',base,{x:0.5,y:0.5},0,-100)).not.toThrow();
+ });
+ it('handles unknown effect mode gracefully',()=>{
+  const p={...base,mode:999};
+  const result=colorAt('gen2',p,{x:0.5,y:0.5},0,100);
+  expect(result).toEqual([200,100,50]);
+ });
+});
