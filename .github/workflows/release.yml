@@ -1,7 +1,8 @@
 name: Publish clients
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,6 +31,7 @@ jobs:
         run: python tools/release.py version --run-number "$RELEASE_RUN_NUMBER" --repository "$RELEASE_REPOSITORY" --github-output "$GITHUB_OUTPUT"
   build:
     needs: version
+    environment: release
     strategy:
       fail-fast: false
       matrix:
