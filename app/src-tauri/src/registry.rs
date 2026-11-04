@@ -971,8 +971,8 @@ mod tests {
         let copies = [
             // installed by the .deb, .rpm and Arch packages
             (
-                "packaging/70-sharkfin.rules",
-                include_str!("../../../packaging/70-sharkfin.rules"),
+                "packaging/70-akko-studio.rules",
+                include_str!("../../../packaging/70-akko-studio.rules"),
             ),
             // offered for pasting by the Linux permission panel
             (

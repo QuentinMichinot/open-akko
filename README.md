@@ -15,7 +15,7 @@ Configuration des claviers AKKO sous Windows et Linux : éclairage, couleurs par
 Sous Linux, installez `pipewire-utils` et `pulseaudio-utils` pour les effets audio. Installez aussi les règles d’accès USB une fois, puis rebranchez le clavier :
 
 ```sh
-sudo install -m 0644 packaging/70-sharkfin.rules /etc/udev/rules.d/70-sharkfin.rules
+sudo install -m 0644 packaging/70-akko-studio.rules /etc/udev/rules.d/70-akko-studio.rules
 sudo udevadm control --reload-rules
 ```
 
