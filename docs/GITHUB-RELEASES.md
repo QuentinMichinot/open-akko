@@ -49,7 +49,7 @@ Pour une nouvelle série, modifiez ensemble les versions de `app/package.json`, 
 | Linux, AppImage dans un dossier utilisateur accessible en écriture | Remplacement de l’AppImage après vérification, puis relance |
 | Compilation locale, ZIP portable ou paquet RPM | Détection et fenêtre, puis ouverture de la page de téléchargement |
 
-L’installation locale actuelle sur le poste Fedora était un exécutable compilé directement. Elle pourra détecter les versions publiées, mais le passage à la première AppImage sera nécessaire une fois pour obtenir l’installation intégrée. Les préférences utilisent le même identifiant d’application, `fr.local.akkostudio`.
+L’installation locale actuelle sur le poste Fedora était un exécutable compilé directement. Elle pourra détecter les versions publiées, mais le passage à la première AppImage sera nécessaire une fois pour obtenir l’installation intégrée. Les préférences utilisent le même identifiant d’application, `com.kayzidev.open-akko`.
 
 Les règles USB et `pipewire-utils` / `pulseaudio-utils` sont à installer une seule fois sur Fedora. Une mise à jour ne demande pas les droits administrateur pour remplacer une AppImage placée dans un dossier utilisateur. Si elle se trouve dans un dossier système, déplacez-la d’abord dans un emplacement accessible en écriture.
 

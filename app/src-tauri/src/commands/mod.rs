@@ -1,6 +1,12 @@
 // SPDX-FileCopyrightText: JR Lanteigne <root@dnim.dev>
 // SPDX-FileCopyrightText: Shiroki Satsuki <me@shirok1.dev>
 // SPDX-License-Identifier: GPL-3.0-or-later
+//! Tauri command handlers for keyboard operations.
+//! Organized into submodules by domain.
+
+mod device;
+pub use device::*;
+
 use std::time::{Duration, Instant};
 
 use parking_lot::Mutex;
@@ -639,10 +645,7 @@ pub fn set_profile(state: tauri::State<AppState>, profile: u8) -> Result<(), Str
     })
 }
 
-#[tauri::command(async)]
-pub fn build_id() -> String {
-    registry::build_id()
-}
+// build_id moved to registry.rs
 
 #[tauri::command(async)]
 pub fn read_keymap(state: tauri::State<AppState>, profile: u8) -> Result<Vec<u8>, String> {

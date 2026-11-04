@@ -1,4 +1,4 @@
-name: Akko Studio Windows packages
+name: Open Akko Windows packages
 on:
   workflow_dispatch:
     inputs:
@@ -14,29 +14,16 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-pc-windows-msvc
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: app/src-tauri
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/setup-desktop
       - name: Check keyboard profiles
         run: python tools/check_studio_profiles.py
-      - name: Install frontend dependencies
-        working-directory: app
-        run: npm ci
       - name: Frontend checks
         working-directory: app
         run: |
+          npm run lint
           npx tsc --noEmit
-          npx vitest run
+          npm test
       - name: Native checks including WASAPI
         working-directory: app/src-tauri
         run: |
@@ -48,7 +35,7 @@ jobs:
         env:
           PACKAGE_FORMAT: ${{ inputs.format }}
         run: ./packaging/windows/build.ps1 -Format $env:PACKAGE_FORMAT
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: Akko-Studio-windows-x64
           path: |

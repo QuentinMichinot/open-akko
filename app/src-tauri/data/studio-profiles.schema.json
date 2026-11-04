@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Akko Studio keyboard profiles",
+  "title": "Open Akko keyboard profiles",
   "type": "object",
   "additionalProperties": false,
   "required": [

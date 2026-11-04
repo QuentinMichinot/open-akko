@@ -16,22 +16,33 @@ import {
   type InputMonitoringStatus,
 } from "@/lib/backend";
 
-// Most of these boards are ROYUAN's 3151, but 288 of the 1407 in the registry
-// ship under a different vendor ID, so matching 3151 alone locks their owners
-// out. Keep in step with `packaging/70-sharkfin.rules`.
-const UDEV_RULE =
-  'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3151|0461|046a|05ac|0db0|145f|14a5|2ea8|3121|3299|331a|374a|379a|38a9|38ee|391d|3984|39a8|39ab|54ab", MODE="0660", TAG+="uaccess"';
-
-// One paste: write the rule, reload, apply. `tee` because the redirect would
-// run as the user, not as root. Deliberately not a script to download and
-// pipe into a shell: everything it does is visible in the line itself.
-// Continued across lines so it stays readable in a narrow panel. Pasting it
-// still runs as one command, and a visual wrap inserts no newline of its own.
-const UDEV_ONELINER = [
-  `echo '${UDEV_RULE}' \\`,
-  "  | sudo tee /etc/udev/rules.d/70-sharkfin.rules >/dev/null \\",
-  "  && sudo udevadm control --reload-rules && sudo udevadm trigger",
-].join("\n");
+// Keep in step with `packaging/70-open-akko.rules`. Rules match specific
+// vendor:product pairs from the registry to avoid granting broad access.
+// One paste: write the rules, reload, apply. Uses a heredoc to keep the
+// complete rule set visible. Continued across lines for readability.
+const UDEV_ONELINER = `cat << 'EORULES' | sudo tee /etc/udev/rules.d/70-open-akko.rules >/dev/null
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0461", ATTRS{idProduct}=="4002|4003", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046a", ATTRS{idProduct}=="012d|0141", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="024f", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0db0", ATTRS{idProduct}=="32c0|ebbe", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="145f", ATTRS{idProduct}=="0379|038d|038e|03b3|03b4", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="14a5", ATTRS{idProduct}=="c046", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2ea8", ATTRS{idProduct}=="2124", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3121", ATTRS{idProduct}=="5056", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3151", ATTRS{idProduct}=="4002|4003|4007|4010|4015|4018|4035|5002|5009|5025|5029|502c|502d|502e|502f|5030|5033|5041|504c|504f|5054|5056|5068|506a|506c|5074", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3299", ATTRS{idProduct}=="273f", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="331a", ATTRS{idProduct}=="3010", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="374a", ATTRS{idProduct}=="a213|a216|a219|a225|a228|a232|a233|a236|a242|a250|a260|a262|a264|a267|a270", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="379a", ATTRS{idProduct}=="1803|1805|1806|3626|a011", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="38a9", ATTRS{idProduct}=="0006|0015|0017|0024|9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="38ee", ATTRS{idProduct}=="0001|0003|0005|0009|000a|0016|0040|0049", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="391d", ATTRS{idProduct}=="2001|200d|200f|2017", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3984", ATTRS{idProduct}=="03e8|03e9|03ea", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="39a8", ATTRS{idProduct}=="9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="39ab", ATTRS{idProduct}=="9005|9007|9008|9013|9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="54ab", ATTRS{idProduct}=="d022", MODE="0660", TAG+="uaccess"
+EORULES
+sudo udevadm control --reload-rules && sudo udevadm trigger`;
 
 const isLinux = () =>
   navigator.userAgent.includes("Linux") && !navigator.userAgent.includes("Android");

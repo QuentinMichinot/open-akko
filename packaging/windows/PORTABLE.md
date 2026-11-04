@@ -1,6 +1,6 @@
-# Akko Studio pour Windows
+# Open Akko pour Windows
 
-Version portable : extraire tout le ZIP puis ouvrir **Akko Studio.exe**.
+Version portable : extraire tout le ZIP puis ouvrir **Open Akko.exe**.
 
 Windows 10 ou 11, 64 bits. Le composant Microsoft Edge WebView2 Runtime doit être présent. L’installateur standard `.exe` prépare ce composant ; le ZIP portable suppose qu’il est déjà installé.
 

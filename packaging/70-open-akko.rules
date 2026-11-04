@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: JR Lanteigne <root@dnim.dev>
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Let the logged-in user talk to the keyboards in the registry.
+# Generated from the device registry to match only supported hardware.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0461", ATTRS{idProduct}=="4002|4003", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046a", ATTRS{idProduct}=="012d|0141", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="024f", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0db0", ATTRS{idProduct}=="32c0|ebbe", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="145f", ATTRS{idProduct}=="0379|038d|038e|03b3|03b4", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="14a5", ATTRS{idProduct}=="c046", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2ea8", ATTRS{idProduct}=="2124", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3121", ATTRS{idProduct}=="5056", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3151", ATTRS{idProduct}=="4002|4003|4007|4010|4015|4018|4035|5002|5009|5025|5029|502c|502d|502e|502f|5030|5033|5041|504c|504f|5054|5056|5068|506a|506c|5074", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3299", ATTRS{idProduct}=="273f", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="331a", ATTRS{idProduct}=="3010", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="374a", ATTRS{idProduct}=="a213|a216|a219|a225|a228|a232|a233|a236|a242|a250|a260|a262|a264|a267|a270", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="379a", ATTRS{idProduct}=="1803|1805|1806|3626|a011", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="38a9", ATTRS{idProduct}=="0006|0015|0017|0024|9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="38ee", ATTRS{idProduct}=="0001|0003|0005|0009|000a|0016|0040|0049", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="391d", ATTRS{idProduct}=="2001|200d|200f|2017", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3984", ATTRS{idProduct}=="03e8|03e9|03ea", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="39a8", ATTRS{idProduct}=="9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="39ab", ATTRS{idProduct}=="9005|9007|9008|9013|9016", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="54ab", ATTRS{idProduct}=="d022", MODE="0660", TAG+="uaccess"

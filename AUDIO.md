@@ -1,4 +1,4 @@
-# Audio et microphone dans Akko Studio
+# Audio et microphone dans Open Akko
 
 Le mode audio dispose de sa propre activation, accessible en permanence dans la colonne de gauche : **Effets / Audio**. L’onglet **Audio réactif** permet de le configurer. Le clavier doit être branché en USB.
 

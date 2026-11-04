@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu-22.04, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-desktop
       - name: Release tooling and model profiles
         run: |
@@ -23,8 +23,9 @@ jobs:
       - name: Frontend checks
         working-directory: app
         run: |
+          npm run lint
           npm run build
-          npx vitest run
+          npm test
       - name: Native checks
         working-directory: app/src-tauri
         run: |
@@ -39,3 +40,10 @@ jobs:
           cd app
           npx vite build --sourcemap
           python3 ../tools/notices.py --check
+      - name: Security audits
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          cargo install cargo-audit --locked || true
+          cd app/src-tauri && cargo audit || echo "::warning::cargo audit found advisories"
+          cd ../.. && cd app && npm audit --audit-level=moderate || echo "::warning::npm audit found advisories"

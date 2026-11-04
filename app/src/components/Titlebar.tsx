@@ -22,7 +22,7 @@ export default function Titlebar({ model, audio, onAudio }: { model: string; aud
       void action(() => e.detail === 2 ? getCurrentWindow().toggleMaximize() : getCurrentWindow().startDragging());
     }}>
       <Keyboard className="pointer-events-none size-4 text-primary" />
-      <span className="pointer-events-none text-sm font-semibold tracking-tight">Akko Studio</span>
+      <span className="pointer-events-none text-sm font-semibold tracking-tight">Open Akko</span>
       <span className="pointer-events-none ml-2 text-xs text-muted-foreground">{model}</span>
     </div>
     {audio && <Button variant="ghost" size="sm" onClick={onAudio} className="mr-3 text-xs text-primary"><AudioLines className="size-3.5" />Mode audio actif</Button>}
