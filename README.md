@@ -1,4 +1,4 @@
-# Akko Studio
+# Open Akko
 
 Configuration des claviers AKKO sous Windows et Linux : éclairage, couleurs par touche, affectations, macros et effets audio selon les capacités du modèle.
 
@@ -15,7 +15,7 @@ Configuration des claviers AKKO sous Windows et Linux : éclairage, couleurs par
 Sous Linux, installez `pipewire-utils` et `pulseaudio-utils` pour les effets audio. Installez aussi les règles d’accès USB une fois, puis rebranchez le clavier :
 
 ```sh
-sudo install -m 0644 packaging/70-akko-studio.rules /etc/udev/rules.d/70-akko-studio.rules
+sudo install -m 0644 packaging/70-open-akko.rules /etc/udev/rules.d/70-open-akko.rules
 sudo udevadm control --reload-rules
 ```
 
@@ -49,6 +49,6 @@ Les dépendances système et les formats sont détaillés dans [le guide Windows
 
 ## Licence et origine
 
-Akko Studio est une adaptation de [Sharkfin, par dniminenn et ses contributeurs](https://github.com/dniminenn/sharkfin), distribuée sous [GPL-3.0-or-later](LICENSE). Les notices et attributions d’origine sont conservées. Les bibliothèques et polices distribuées sont décrites dans [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Open Akko est une adaptation de [Sharkfin, par dniminenn et ses contributeurs](https://github.com/dniminenn/sharkfin), distribuée sous [GPL-3.0-or-later](LICENSE). Les notices et attributions d’origine sont conservées. Les bibliothèques et polices distribuées sont décrites dans [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 Projet communautaire indépendant, sans affiliation à AKKO.

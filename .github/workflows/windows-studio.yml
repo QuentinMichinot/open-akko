@@ -1,4 +1,4 @@
-name: Akko Studio Windows packages
+name: Open Akko Windows packages
 on:
   workflow_dispatch:
     inputs:

@@ -16,11 +16,11 @@ import {
   type InputMonitoringStatus,
 } from "@/lib/backend";
 
-// Keep in step with `packaging/70-akko-studio.rules`. Rules match specific
+// Keep in step with `packaging/70-open-akko.rules`. Rules match specific
 // vendor:product pairs from the registry to avoid granting broad access.
 // One paste: write the rules, reload, apply. Uses a heredoc to keep the
 // complete rule set visible. Continued across lines for readability.
-const UDEV_ONELINER = `cat << 'EORULES' | sudo tee /etc/udev/rules.d/70-akko-studio.rules >/dev/null
+const UDEV_ONELINER = `cat << 'EORULES' | sudo tee /etc/udev/rules.d/70-open-akko.rules >/dev/null
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0461", ATTRS{idProduct}=="4002|4003", MODE="0660", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046a", ATTRS{idProduct}=="012d|0141", MODE="0660", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="024f", MODE="0660", TAG+="uaccess"

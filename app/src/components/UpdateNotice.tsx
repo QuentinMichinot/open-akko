@@ -29,18 +29,18 @@ export default function UpdateNotice() {
   return <>
     <Button id="check-updates" variant="ghost" size="sm" className="h-auto w-full justify-start whitespace-normal px-1 py-2 text-left text-xs" disabled={busy} onClick={() => state.available ? session.show() : void session.check(true)}>
       {busy ? <LoaderCircle className="size-3.5 shrink-0 animate-spin" /> : state.available ? <ArrowDownToLine className="size-3.5 shrink-0 text-primary" /> : <RefreshCw className="size-3.5 shrink-0" />}
-      <span>{state.available ? `Version ${state.available.version} disponible` : "Rechercher une mise à jour"}{state.currentVersion && <span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Akko Studio {state.currentVersion}</span>}</span>
+      <span>{state.available ? `Version ${state.available.version} disponible` : "Rechercher une mise à jour"}{state.currentVersion && <span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Open Akko {state.currentVersion}</span>}</span>
     </Button>
     <Dialog open={state.open} onOpenChange={open => { if (!open && !busy) session.dismiss(); }}>
       <DialogContent showCloseButton={false} className="sm:max-w-lg" onEscapeKeyDown={e => { if (busy) e.preventDefault(); }} onInteractOutside={e => { if (busy) e.preventDefault(); }}>
         <DialogHeader>
           <span className="mb-2 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">{busy ? <LoaderCircle className="size-5 animate-spin" /> : state.available ? <ArrowDownToLine className="size-5" /> : <Check className="size-5" />}</span>
-          <DialogTitle>{installing ? "Mise à jour d’Akko Studio" : title}</DialogTitle>
+          <DialogTitle>{installing ? "Mise à jour d’Open Akko" : title}</DialogTitle>
           <DialogDescription>{state.available ? `${state.currentVersion} → ${state.available.version}` : `Version installée : ${state.currentVersion || "…"}`}</DialogDescription>
         </DialogHeader>
         {state.available && <>
           {state.available.notes && <div className="max-h-48 overflow-auto whitespace-pre-wrap rounded-xl bg-muted/50 p-4 text-sm text-muted-foreground">{state.available.notes}</div>}
-          <p className="text-sm text-muted-foreground">{state.installKind === "manual" ? "Cette installation se met à jour depuis la page de téléchargement. Installez la version .exe sous Windows ou l’AppImage sous Linux pour bénéficier ensuite des mises à jour intégrées." : "Akko Studio redémarrera après l’installation. L’écoute audio sera arrêtée et votre éclairage habituel sera rétabli."}</p>
+          <p className="text-sm text-muted-foreground">{state.installKind === "manual" ? "Cette installation se met à jour depuis la page de téléchargement. Installez la version .exe sous Windows ou l’AppImage sous Linux pour bénéficier ensuite des mises à jour intégrées." : "Open Akko redémarrera après l’installation. L’écoute audio sera arrêtée et votre éclairage habituel sera rétabli."}</p>
         </>}
         {installing && <div className="space-y-2" aria-live="polite"><div className="flex justify-between text-sm"><span>{state.phase === "installing" ? "Installation et redémarrage…" : "Téléchargement et vérification…"}</span>{percent !== null && state.phase === "downloading" && <span>{percent} %</span>}</div><div role="progressbar" aria-label="Mise à jour" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent ?? undefined} className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${state.phase === "installing" ? 100 : percent ?? 10}%` }} /></div></div>}
         {state.error && <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{state.error}</p>}

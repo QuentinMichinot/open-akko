@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Akko Studio",
+  "productName": "Open Akko",
   "version": "0.12.0",
   "identifier": "fr.local.akkostudio",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Akko Studio",
+        "title": "Open Akko",
         "width": 1280,
         "height": 820,
         "minWidth": 1080,
@@ -54,26 +54,26 @@
     "linux": {
       "appimage": {
         "files": {
-          "/usr/share/metainfo/com.akkostudio.akkostudio.metainfo.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml",
-          "/usr/share/metainfo/com.akkostudio.akkostudio.appdata.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml"
+          "/usr/share/metainfo/com.kayzidev.open-akko.metainfo.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml",
+          "/usr/share/metainfo/com.kayzidev.open-akko.appdata.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml"
         }
       },
       "deb": {
         "files": {
-          "/usr/lib/udev/rules.d/70-akko-studio.rules": "../../packaging/70-akko-studio.rules",
-          "/usr/share/doc/akko-studio/copyright": "../../LICENSE",
-          "/usr/share/doc/akko-studio/THIRD-PARTY-NOTICES.md": "../../THIRD-PARTY-NOTICES.md",
-          "/usr/share/metainfo/com.akkostudio.akkostudio.metainfo.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml",
-          "/usr/share/metainfo/com.akkostudio.akkostudio.appdata.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml"
+          "/usr/lib/udev/rules.d/70-open-akko.rules": "../../packaging/70-open-akko.rules",
+          "/usr/share/doc/open-akko/copyright": "../../LICENSE",
+          "/usr/share/doc/open-akko/THIRD-PARTY-NOTICES.md": "../../THIRD-PARTY-NOTICES.md",
+          "/usr/share/metainfo/com.kayzidev.open-akko.metainfo.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml",
+          "/usr/share/metainfo/com.kayzidev.open-akko.appdata.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml"
         }
       },
       "rpm": {
         "files": {
-          "/usr/lib/udev/rules.d/70-akko-studio.rules": "../../packaging/70-akko-studio.rules",
-          "/usr/share/doc/akko-studio/copyright": "../../LICENSE",
-          "/usr/share/doc/akko-studio/THIRD-PARTY-NOTICES.md": "../../THIRD-PARTY-NOTICES.md",
-          "/usr/share/metainfo/com.akkostudio.akkostudio.metainfo.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml",
-          "/usr/share/metainfo/com.akkostudio.akkostudio.appdata.xml": "../../packaging/com.akkostudio.akkostudio.metainfo.xml"
+          "/usr/lib/udev/rules.d/70-open-akko.rules": "../../packaging/70-open-akko.rules",
+          "/usr/share/doc/open-akko/copyright": "../../LICENSE",
+          "/usr/share/doc/open-akko/THIRD-PARTY-NOTICES.md": "../../THIRD-PARTY-NOTICES.md",
+          "/usr/share/metainfo/com.kayzidev.open-akko.metainfo.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml",
+          "/usr/share/metainfo/com.kayzidev.open-akko.appdata.xml": "../../packaging/com.kayzidev.open-akko.metainfo.xml"
         }
       }
     }
