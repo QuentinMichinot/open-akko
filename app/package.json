@@ -1,9 +1,9 @@
 {
-  "name": "sharkfin",
+  "name": "akko-studio",
   "private": true,
   "version": "0.12.0",
   "license": "GPL-3.0-or-later",
-  "author": "dniminenn",
+  "author": "kayzidev",
   "repository": "https://github.com/kayzidev/open-akko",
   "type": "module",
   "scripts": {
