@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import {unavailableEffect} from "@/lib/keyboard-profile";
 import {STYLE_PRESETS} from "@/lib/style-presets";
 import {gridImage} from "@/lib/grid-palette";
-import { REACTIVE_PRESETS, reactiveParams, matchesReactive } from "@/lib/reactive-presets";
 import { EFFECT_INFO } from "@/lib/effect-info";
 import { Input } from "@/components/ui/input";
 import { t } from "@/lib/i18n";
@@ -338,26 +337,6 @@ export default function LightingPage({ device }: { device: ConnectedDevice | nul
           />
       )}
 
-      {modes.some(m=>m.value===8) && <details className="rounded-xl border border-border p-4"><summary className="cursor-pointer font-medium">Variantes réactives et inspirations communautaires</summary><Section title="Préréglages réactifs" hint="Variantes des effets natifs Réaction aux touches, Rayonnement et Ondulation : couleur, vitesse et luminosité. Un clic applique le réglage.">
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {REACTIVE_PRESETS.filter(p=>modes.some(m=>m.value===p.mode)).map(preset=>{
-            const active=matchesReactive(param,preset);
-            return <button key={preset.id} aria-pressed={active} disabled={device?.readOnly}
-              onClick={()=>{setLedOff(false);commit(reactiveParams(paramRef.current??param,preset));}}
-              className={cn('rounded-xl border p-3 text-left transition-colors disabled:opacity-50',active?'border-primary bg-primary/10':'border-border bg-card hover:bg-accent')}>
-              <span className="mb-2 block h-2 rounded-full" style={{background:preset.rainbow?'linear-gradient(90deg, #ff4141,#ffcf40,#40ef88,#488bff,#c346ff)':`rgb(${preset.color.join(',')})`}} />
-              <div className="text-sm font-medium">{preset.name}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{preset.description}</div>
-              {preset.inspiration&&<span className="mt-2 block text-xs text-primary">Inspiré de QMK · adaptation native</span>}
-            </button>;
-          })}
-        </div>
-        {[5,8,14].includes(param.mode)&&<div className="space-y-2 rounded-lg border border-border p-3">
-          <label htmlFor="reactive-try" className="text-sm font-medium">Tester la réaction des touches</label>
-          <Input id="reactive-try" placeholder="Tapez ici et observez le clavier…" aria-label="Tester les touches réactives" />
-          <p className="text-xs text-muted-foreground">La réaction est exécutée par le clavier. Le texte saisi ici n’est pas enregistré dans un profil ou une macro.</p>
-        </div>}
-      </Section></details>}
 
       {[13,16].includes(param.mode)&&<Section title="Grille multicolore personnalisée" hint="Motif fixe avec plusieurs couleurs. L’effet animé natif Grille de couleurs reste disponible séparément.">
         <div className="flex flex-wrap gap-4">{palette.map((hex,i)=><label key={i} className="space-y-1 text-sm">
