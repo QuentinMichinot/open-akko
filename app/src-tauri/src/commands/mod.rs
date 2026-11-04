@@ -4,8 +4,8 @@
 //! Tauri command handlers for keyboard operations.
 //! Organized into submodules by domain.
 
-mod registry;
-pub use registry::*;
+mod device;
+pub use device::*;
 
 use std::time::{Duration, Instant};
 

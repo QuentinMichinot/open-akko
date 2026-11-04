@@ -974,9 +974,8 @@ function ColoursStep({
       // A failed read or write must not leave the backend on a trial reading.
       try {
         await setLedFlagsSwapped(previous);
-      } catch (e) {
+      } catch {
         setColour({ ...c, sideRestored: false });
-        throw e;
       }
     }
     setColour({ ...c, sideRestored: true });
