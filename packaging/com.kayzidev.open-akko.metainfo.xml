@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.kayzidev.open-akko</id>
+  <name>Open Akko</name>
+  <summary>Configurator for AKKO and other ROYUAN keyboards</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>Remap keys, set the RGB, record macros and change device settings on keyboards built on ROYUAN hardware.</p>
+    <p>Writes need a USB cable. Open Akko never flashes firmware.</p>
+  </description>
+  <launchable type="desktop-id">open-akko.desktop</launchable>
+  <url type="homepage">https://github.com/kayzidev/open-akko</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Remapping keys on an AKKO keyboard</caption>
+      <image type="source" width="1280" height="820">https://raw.githubusercontent.com/kayzidev/open-akko/main/docs/keys-abyss.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="0.12.0" date="2026-11-04"/>
+  </releases>
+</component>
