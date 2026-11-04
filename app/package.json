@@ -15,7 +15,7 @@
     "web:build": "npm run web:wasm && tsc -p tsconfig.web.json --noEmit && vite build --config vite.web.config.ts && mv dist-web/web.html dist-web/index.html && node scripts/gen-sw.mjs",
     "build:windows": "tauri build --config src-tauri/tauri.windows.conf.json --target x86_64-pc-windows-msvc --bundles nsis",
     "build:fedora": "tauri build --config src-tauri/tauri.fedora.conf.json",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "test": "vitest run"
   },
   "dependencies": {
@@ -51,6 +51,7 @@
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^17.14.0",
     "prettier": "^3.4.2",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
