@@ -37,7 +37,7 @@ import {
   type InputMonitoringStatus,
 } from "@/lib/backend";
 import ColorwayPicker from "@/components/ColorwayPicker";
-import PermissionNotice from "@/components/PermissionNotice";
+import DeviceErrorNotice from "@/components/DeviceErrorNotice";
 import ReadOnlyNotice from "@/components/ReadOnlyNotice";
 import UnregisteredNotice from "@/components/UnregisteredNotice";
 import {isAudioSupported} from "@/lib/keyboard-profile";
@@ -92,10 +92,8 @@ export default function App() {
   const [page, setPage] = useState<Page>("lighting");
   const [device, setDevice] = useState<ConnectedDevice | null>(null);
   const [unknown, setUnknown] = useState<DiscoveredUnknown | null>(null);
-  const [openFailed, setOpenFailed] = useState(false);
+  const [deviceError, setDeviceError] = useState<import("@/lib/backend").DeviceErrorKind>({ kind: "none" });
   const [inputMonitoring, setInputMonitoring] = useState<InputMonitoringStatus | null>(null);
-  const [stalled, setStalled] = useState(false);
-  const [asleep, setAsleep] = useState(false);
   const [scanning, setScanning] = useState(true);
   const guided = useRef<number | null>(null);
   const guidedUnknown = useRef<string | null>(null);
@@ -121,15 +119,12 @@ export default function App() {
       const r = await scan();
       setDevice(r.connected);
       setUnknown(r.unknown[0] ?? null);
-      setOpenFailed(r.openFailed);
+      setDeviceError(r.deviceError);
       setInputMonitoring(r.inputMonitoring);
-      setStalled(r.stalled);
-      setAsleep(r.keyboardOffline);
     } catch {
       setDevice(null);
       setUnknown(null);
-      setOpenFailed(false);
-      setAsleep(false);
+      setDeviceError({ kind: "none" });
     } finally {
       setScanning(false);
     }
@@ -220,9 +215,9 @@ export default function App() {
                 <div className="truncate text-sm font-medium">
                   {device
                     ? deviceLabel(device.spec)
-                    : stalled
+                    : deviceError.kind === "stalled"
                       ? t("Unplug, wait 10s, plug back in")
-                      : asleep
+                      : deviceError.kind === "keyboardOffline"
                         ? t("Keyboard asleep")
                         : unknown
                           ? unknown.product || "Unrecognized keyboard"
@@ -251,9 +246,9 @@ export default function App() {
                                 : ` · ${device.battery}%`)
                             : t("USB · id {id}", { id: device.deviceId })}
                     </span>
-                  ) : stalled ? (
+                  ) : deviceError.kind === "stalled" ? (
                     t("Unplug, wait 10s, plug back in")
-                  ) : asleep ? (
+                  ) : deviceError.kind === "keyboardOffline" ? (
                     t("Press a key, or connect by cable")
                   ) : unknown ? (
                     <span className="mt-1 block">
@@ -334,7 +329,7 @@ export default function App() {
       </main>
       </div>
       <WindowResizeHandles />
-      {!device && openFailed && <PermissionNotice inputMonitoring={inputMonitoring} onRefresh={doScan} />}
+      {!device && <DeviceErrorNotice error={deviceError} inputMonitoring={inputMonitoring} onRetry={doScan} />}
       <Toaster position="bottom-right" />
     </div>
   );

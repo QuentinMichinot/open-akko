@@ -182,22 +182,36 @@ pub struct DiscoveredUnknown {
     pub device_id: Option<u32>,
 }
 
+#[derive(Serialize, Clone, Copy, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", tag = "kind")]
+pub enum DeviceErrorKind {
+    /// No error, device connected successfully.
+    None,
+    /// Device node found but cannot be opened (permissions).
+    AccessDenied,
+    /// Firmware stalled and needs replug.
+    Stalled,
+    /// Receiver paired but keyboard is asleep or off.
+    KeyboardOffline,
+    /// Device was discovered but did not respond to identify.
+    NoResponse,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ScanResult {
     pub connected: Option<ConnectedDevice>,
     pub unknown: Vec<DiscoveredUnknown>,
-    /// A keyboard was found but its device node could not be opened. On
-    /// Linux that is almost always a missing udev rule; without saying so
-    /// the app reports "no device" with the keyboard plugged in.
-    pub open_failed: bool,
+    /// Detailed error information when connection fails.
+    pub device_error: DeviceErrorKind,
     /// None outside macOS. A status check never requests access.
     pub input_monitoring: Option<crate::permissions::InputMonitoringStatus>,
-    /// The firmware stalled and the board must be replugged. Nothing is
-    /// retried while this is set.
+    /// Legacy fields for backward compatibility.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub open_failed: bool,
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub stalled: bool,
-    /// A receiver is plugged in and paired, but its keyboard is asleep or
-    /// switched off. A key press wakes it; so does the cable.
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub keyboard_offline: bool,
 }
 
@@ -253,8 +267,9 @@ pub fn scan(state: tauri::State<AppState>) -> Result<ScanResult, String> {
             return Ok(ScanResult {
                 connected: Some(inner.open.as_ref().unwrap().connected(ok, hall)),
                 unknown: vec![],
-                open_failed: false,
+                device_error: DeviceErrorKind::None,
                 input_monitoring,
+                open_failed: false,
                 stalled: false,
                 keyboard_offline: false,
             });
@@ -277,8 +292,9 @@ pub fn scan(state: tauri::State<AppState>) -> Result<ScanResult, String> {
             return Ok(ScanResult {
                 connected: None,
                 unknown: vec![],
-                open_failed: false,
+                device_error: DeviceErrorKind::Stalled,
                 input_monitoring,
+                open_failed: false,
                 stalled: true,
                 keyboard_offline: false,
             });
@@ -287,15 +303,14 @@ pub fn scan(state: tauri::State<AppState>) -> Result<ScanResult, String> {
 
     let mut unknown = Vec::new();
     let mut connected = None;
-    let mut open_failed = false;
-    let mut keyboard_offline = false;
+    let mut device_error = DeviceErrorKind::None;
     for d in found {
         let api = inner.api.as_ref().unwrap();
         let transport = match Transport::open(api, &d.path) {
             Ok(t) => t,
             Err(e) => {
                 log::warn!("open {} failed: {e}", d.path);
-                open_failed = true;
+                device_error = DeviceErrorKind::AccessDenied;
                 continue;
             }
         };
@@ -359,23 +374,31 @@ pub fn scan(state: tauri::State<AppState>) -> Result<ScanResult, String> {
                     device_id: Some(id),
                 }),
             },
-            Err(HidError::KeyboardOffline) => keyboard_offline = true,
-            Err(_) => unknown.push(DiscoveredUnknown {
-                path: d.path,
-                product_id: d.product_id,
-                product: d.product,
-                device_id: None,
-            }),
+            Err(HidError::KeyboardOffline) => {
+                device_error = DeviceErrorKind::KeyboardOffline;
+            }
+            Err(_) => {
+                if device_error == DeviceErrorKind::None {
+                    device_error = DeviceErrorKind::NoResponse;
+                }
+                unknown.push(DiscoveredUnknown {
+                    path: d.path,
+                    product_id: d.product_id,
+                    product: d.product,
+                    device_id: None,
+                });
+            }
         }
     }
 
     Ok(ScanResult {
         connected,
         unknown,
-        open_failed,
+        device_error,
         input_monitoring,
-        stalled: false,
-        keyboard_offline,
+        open_failed: device_error == DeviceErrorKind::AccessDenied,
+        stalled: device_error == DeviceErrorKind::Stalled,
+        keyboard_offline: device_error == DeviceErrorKind::KeyboardOffline,
     })
 }
 
