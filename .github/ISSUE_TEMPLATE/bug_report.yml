@@ -1,0 +1,113 @@
+name: 🐛 Rapport de bug
+description: Signaler un problème avec Open Akko
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler ce problème. Vos retours aident à améliorer Open Akko pour tous.
+
+  - type: dropdown
+    id: keyboard-model
+    attributes:
+      label: Modèle de clavier
+      description: Quel modèle de clavier AKKO utilisez-vous ?
+      options:
+        - Akko 5075
+        - Akko 5087
+        - Akko 5098
+        - Akko 5108
+        - Akko 3098B
+        - Akko MOD007
+        - Akko PC75B Plus
+        - Autre (précisez dans la description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: connection-type
+    attributes:
+      label: Type de connexion
+      description: Comment votre clavier est-il connecté ?
+      options:
+        - USB filaire
+        - Bluetooth
+        - 2.4 GHz sans fil
+        - Je ne sais pas
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Système d'exploitation
+      description: Quel OS utilisez-vous ?
+      placeholder: "Ex: Windows 11 23H2, Ubuntu 22.04, Fedora 39"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version d'Open Akko
+      description: Quelle version d'Open Akko utilisez-vous ? (Aide → À propos)
+      placeholder: "Ex: 0.12.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      description: Comment reproduire le problème ?
+      placeholder: |
+        1. Ouvrir Open Akko
+        2. Aller dans l'onglet '...'
+        3. Cliquer sur '...'
+        4. Le problème apparaît
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Qu'attendiez-vous qu'il se passe ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement actuel
+      description: Que se passe-t-il réellement ?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: keyboard-recovery
+    attributes:
+      label: Le clavier a-t-il cessé de répondre ?
+      description: Voir les étapes de récupération dans le README si nécessaire
+      options:
+        - Non
+        - Oui, et un rebranchement USB a résolu le problème
+        - Oui, et Fn+Esc ou une réinitialisation d'usine était nécessaire
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs et bundle de données
+      description: |
+        Si disponible, collectez un bundle de données depuis l'onglet Contribute → Collect data bundle.
+        Vous pouvez également joindre des captures d'écran ou des logs.
+      render: text
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informations supplémentaires
+      description: Tout autre contexte utile pour diagnostiquer le problème

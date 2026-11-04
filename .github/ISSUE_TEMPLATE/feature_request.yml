@@ -1,0 +1,55 @@
+name: ✨ Demande de fonctionnalité
+description: Suggérer une nouvelle fonctionnalité pour Open Akko
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de partager votre idée ! Les suggestions de la communauté aident à définir la feuille de route d'Open Akko.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Catégorie
+      description: À quelle catégorie appartient cette fonctionnalité ?
+      options:
+        - Éclairage RGB
+        - Remappage de touches
+        - Macros
+        - Effets audio
+        - Interface utilisateur
+        - Support matériel
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème à résoudre
+      description: Quel problème cette fonctionnalité résoudrait-elle ?
+      placeholder: "Je suis souvent frustré par..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution proposée
+      description: Comment imaginez-vous cette fonctionnalité ?
+      placeholder: "Je voudrais pouvoir..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives envisagées
+      description: Avez-vous envisagé d'autres solutions ou contournements ?
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informations supplémentaires
+      description: Tout autre contexte, captures d'écran ou exemples

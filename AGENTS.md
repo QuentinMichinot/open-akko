@@ -39,6 +39,25 @@ copy".
 
 One thing per pull request too. Two features are two pull requests.
 
+### Conventional commits
+
+Release notes are generated automatically from commit messages using
+[Conventional Commits](https://www.conventionalcommits.org/). Use these
+prefixes:
+
+- `feat:` new feature
+- `fix:` bug fix
+- `perf:` performance improvement
+- `refactor:` code refactoring
+- `style:` formatting, whitespace
+- `test:` test additions or fixes
+- `docs:` documentation changes
+- `build:` build system, dependencies
+- `ci:` CI configuration
+- `chore:` maintenance tasks
+
+Example: `feat: add audio visualization`, `fix: restore backlight after sleep`.
+
 ## Keyboards can be broken
 
 The user's board is real hardware and mistakes reach it.

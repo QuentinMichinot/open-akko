@@ -1,5 +1,11 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Is my keyboard supported?
-    url: https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md
-    about: Every known board, and what sharkfin can do with each.
+  - name: 📋 Mon clavier est-il supporté ?
+    url: https://github.com/kayzidev/open-akko/blob/main/docs/BOARDS.md
+    about: Liste complète des 1413 claviers AKKO supportés et leurs fonctionnalités
+  - name: 📖 Documentation
+    url: https://github.com/kayzidev/open-akko/blob/main/CONTRIBUTING.md
+    about: Guide de contribution et documentation développeur
+  - name: 💬 Discussions
+    url: https://github.com/kayzidev/open-akko/discussions
+    about: Poser des questions et discuter avec la communauté
