@@ -15,28 +15,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11d5960e07136c2c3e9f2fff67c0a6854cd5113f # v4
-      - uses: actions/setup-node@49933eacc0c908c4d92aeb9bb9bb1b23b8efbfcc # v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
-        with:
-          targets: x86_64-pc-windows-msvc
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@e9d7b9fe72fe57eb45fb88c66e302c5c8f99c9fb # v2
-        with:
-          workspaces: app/src-tauri
+      - uses: ./.github/actions/setup-desktop
       - name: Check keyboard profiles
         run: python tools/check_studio_profiles.py
-      - name: Install frontend dependencies
-        working-directory: app
-        run: npm ci
       - name: Frontend checks
         working-directory: app
         run: |
+          npm run lint
           npx tsc --noEmit
-          npx vitest run
+          npm test
       - name: Native checks including WASAPI
         working-directory: app/src-tauri
         run: |
