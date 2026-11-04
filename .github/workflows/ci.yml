@@ -23,8 +23,9 @@ jobs:
       - name: Frontend checks
         working-directory: app
         run: |
+          npm run lint
           npm run build
-          npx vitest run
+          npm test
       - name: Native checks
         working-directory: app/src-tauri
         run: |
