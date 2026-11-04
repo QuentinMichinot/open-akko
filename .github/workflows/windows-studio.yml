@@ -35,7 +35,7 @@ jobs:
         env:
           PACKAGE_FORMAT: ${{ inputs.format }}
         run: ./packaging/windows/build.ps1 -Format $env:PACKAGE_FORMAT
-      - uses: actions/upload-artifact@ea165f80e37c1a1c1c4ed87c70eeacf91da9c3c8 # v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: Akko-Studio-windows-x64
           path: |
