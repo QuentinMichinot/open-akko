@@ -14,7 +14,7 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@11d5960e07136c2c3e9f2fff67c0a6854cd5113f # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-desktop
       - name: Check keyboard profiles
         run: python tools/check_studio_profiles.py
