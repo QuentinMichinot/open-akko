@@ -124,19 +124,26 @@ export interface DiscoveredUnknown {
 
 export type InputMonitoringStatus = "unknown" | "denied" | "granted";
 
+export type DeviceErrorKind =
+  | { kind: "none" }
+  | { kind: "accessDenied" }
+  | { kind: "stalled" }
+  | { kind: "keyboardOffline" }
+  | { kind: "noResponse" };
+
 export interface ScanResult {
   connected: ConnectedDevice | null;
   unknown: DiscoveredUnknown[];
-  /** A keyboard is there but its node can't be opened; on Linux that is
-   * almost always a missing udev rule. */
-  openFailed: boolean;
+  /** Detailed error information when connection fails. */
+  deviceError: DeviceErrorKind;
   /** null outside macOS. Checking does not request access. */
   inputMonitoring: InputMonitoringStatus | null;
-  /** Firmware stalled; nothing is retried until the board is replugged. */
-  stalled: boolean;
-  /** A receiver is paired but its keyboard is asleep or off. A key press
-   * wakes it; so does the cable. */
-  keyboardOffline: boolean;
+  /** Legacy: A keyboard is there but its node can't be opened. */
+  openFailed?: boolean;
+  /** Legacy: Firmware stalled. */
+  stalled?: boolean;
+  /** Legacy: Receiver paired but keyboard asleep. */
+  keyboardOffline?: boolean;
 }
 
 export type SwitchAccess = "none" | "read" | "write" | "global";
