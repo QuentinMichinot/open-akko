@@ -19,8 +19,8 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960e07136c2c3e9f2fff67c0a6854cd5113f # v4
+      - uses: actions/setup-python@a26af69614d60932df82f8ad61db8a0fdf413c86 # v5
         with:
           python-version: '3.12'
       - id: version
@@ -42,7 +42,7 @@ jobs:
             bundle: nsis
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960e07136c2c3e9f2fff67c0a6854cd5113f # v4
       - uses: ./.github/actions/setup-desktop
       - name: Prepare release version and signed bundle
         env:
@@ -86,7 +86,7 @@ jobs:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
           RELEASE_PLATFORM: ${{ matrix.platform }}
         run: python tools/release.py collect --version "$RELEASE_VERSION" --platform "$RELEASE_PLATFORM"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f80e37c1a1c1c4ed87c70eeacf91da9c3c8 # v4
         with:
           name: signed-${{ matrix.platform }}
           path: artifacts/release/*
@@ -97,15 +97,15 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960e07136c2c3e9f2fff67c0a6854cd5113f # v4
+      - uses: actions/setup-python@a26af69614d60932df82f8ad61db8a0fdf413c86 # v5
         with:
           python-version: '3.12'
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+      - uses: Swatinem/rust-cache@e9d7b9fe72fe57eb45fb88c66e302c5c8f99c9fb # v2
         with:
           workspaces: tools/verify-release
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a1c09fbd489721e50a78cc87f6c6bd0fa51 # v4
         with:
           pattern: signed-*
           merge-multiple: true
