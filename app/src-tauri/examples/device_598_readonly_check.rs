@@ -129,7 +129,7 @@ fn main() {
         println!("\n  Testing yc500 READ commands (no writes):");
         
         // READ 0x80: Revision
-        match transport.roundtrip(cmd::GET_RF_VERSION, &[], Checksum::Bit7) {
+        match transport.roundtrip(cmd::GET_REVISION, &[], Checksum::Bit7) {
             Ok(reply) => {
                 let rev = (u16::from(reply[2]) << 8) | u16::from(reply[1]);
                 if rev != 0 {
